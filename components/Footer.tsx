@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -58,17 +59,16 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white mb-4 text-xs tracking-widest uppercase opacity-60">Platform</h3>
             <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-              <li><a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">TrustScore Scan</a></li>
-              <li><a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Threat Database</a></li>
-              <li><a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Browser Extension</a></li>
+              <li><Link href="/trustscore" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">TrustScore Scan</Link></li>
+              <li><Link href="/browser-extension" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Browser Extension</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white mb-4 text-xs tracking-widest uppercase opacity-60">Resources</h3>
             <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-              <li><a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Scam Prevention Guide</a></li>
-              <li><a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Student Stories</a></li>
-              <li><a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Help Center</a></li>
+
+              <li><Link href="/student-stories" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Student Stories</Link></li>
+              <li><Link href="/help-center" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Help Center</Link></li>
             </ul>
           </div>
           <div className="col-span-2 md:col-span-2">
@@ -76,9 +76,9 @@ export default function Footer() {
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 pr-8">
               Did you already pay money to a fake recruiter? Do not panic. Read our immediate action guide to secure your bank accounts and report the fraud.
             </p>
-            <a href="#" className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors flex items-center gap-1">
+            <Link href="/emergency-guide" className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors flex items-center gap-1">
               Read the Emergency Guide <span>&rarr;</span>
-            </a>
+            </Link>
           </div>
         </div>
 

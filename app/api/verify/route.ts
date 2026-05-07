@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email: rawEmail, type, letterText, fileName, fileData, mimeType } = body;
-    
+
     console.log(`🔍 Verification Request: type=${type}, email=${rawEmail}, file=${fileName}, textLength=${letterText?.length || 0}`);
 
     let email = rawEmail?.trim();
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     if (type === 'letter') {
       console.log("📄 Processing Letter/PDF Scan...");
       const combinedText = `${letterText || ''} ${fileName || ''} ${email || ''}`;
-      
+
       // Robust domain extraction (stops at first non-domain character)
       const domainMatch = combinedText.match(/@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
       if (domainMatch) {
@@ -33,17 +33,18 @@ export async function POST(request: Request) {
         while (attempts < 2) {
           try {
             const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
-            
+
             const promptText = `
               Analyze this job offer document for scams or red flags. 
               Identify the company name and recruiter details if possible.
-              Return a short summary of your findings and a safety rating (0-100).
+              Keep your response concise. Include a "TL;DR" section at the end.
+              Return a safety rating (0-100) prominently in the text.
               
               Text Content: ${letterText || 'None provided'}
             `;
 
             const contents: any[] = [{ role: 'user', parts: [{ text: promptText }] }];
-            
+
             if (fileData && mimeType) {
               contents[0].parts.push({
                 inlineData: {
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
               model: 'gemini-2.5-flash',
               contents: contents
             });
-            
+
             aiAnalysis = response.text || '';
             console.log("🤖 AI Analysis Complete");
             break; // Success!
@@ -70,10 +71,16 @@ export async function POST(request: Request) {
         }
 
         if (aiAnalysis) {
-          if (aiAnalysis.toLowerCase().includes('scam') || aiAnalysis.toLowerCase().includes('suspicious') || aiAnalysis.toLowerCase().includes('rating: 1') || aiAnalysis.toLowerCase().includes('rating: 2') || aiAnalysis.toLowerCase().includes('rating: 3')) {
-            trustScoreModifier = -40;
-          } else if (aiAnalysis.toLowerCase().includes('legitimate') || aiAnalysis.toLowerCase().includes('professional')) {
-            trustScoreModifier = 20;
+          const ratingMatch = aiAnalysis.match(/(?:rating|score)[\s*:-]*(\d{1,3})/i) || aiAnalysis.match(/(\d{1,3})\s*\/\s*100/i);
+          if (ratingMatch && ratingMatch[1]) {
+             const extractedRating = parseInt(ratingMatch[1], 10);
+             trustScoreModifier = extractedRating - 35; // Math.max(0, 35 + trustScoreModifier) = extractedRating
+          } else {
+            if (aiAnalysis.toLowerCase().includes('scam') && !aiAnalysis.toLowerCase().includes('not a scam')) {
+              trustScoreModifier = -40;
+            } else if (aiAnalysis.toLowerCase().includes('legitimate') || aiAnalysis.toLowerCase().includes('professional')) {
+              trustScoreModifier = 20;
+            }
           }
         }
       }
@@ -95,18 +102,6 @@ export async function POST(request: Request) {
     }
 
     // 2. Verified Domain Check (Supabase)
-    if (domain && ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'].includes(domain)) {
-      return NextResponse.json({
-        success: true,
-        emailScanned: email,
-        domain,
-        trustScore: Math.max(0, 5 + trustScoreModifier),
-        status: 'Public Email Warning',
-        isVerified: false,
-        aiSummary: aiAnalysis
-      });
-    }
-
     const { data: company, error } = domain ? await supabase
       .from('verified_companies')
       .select('*')
@@ -118,28 +113,41 @@ export async function POST(request: Request) {
     }
 
     // 3. Response Generation
-    if (company) {
-      return NextResponse.json({
-        success: true,
-        emailScanned: email,
-        companyName: company.company_name,
-        domain: company.domain,
-        trustScore: Math.min(100, Math.max(0, company.trust_score + trustScoreModifier)),
-        status: 'Verified Employer',
-        isVerified: true,
-        aiSummary: aiAnalysis
-      });
+    let finalScore = 35;
+    let finalStatus = 'Unverified';
+
+    if (type === 'letter') {
+      finalScore = Math.min(100, Math.max(0, 35 + trustScoreModifier));
+      if (finalScore >= 70) {
+        finalStatus = 'Likely Safe';
+      } else if (finalScore >= 40) {
+        finalStatus = 'Moderate Risk';
+      } else {
+        finalStatus = 'High Risk';
+      }
     } else {
-      return NextResponse.json({
-        success: true,
-        emailScanned: email,
-        domain: domain || 'Unknown',
-        trustScore: Math.min(100, Math.max(0, 35 + trustScoreModifier)),
-        status: trustScoreModifier < 0 ? 'High Risk' : 'Unverified Domain',
-        isVerified: false,
-        aiSummary: aiAnalysis
-      });
+      // Email scan
+      if (company) {
+        finalScore = Math.min(100, Math.max(0, company.trust_score));
+        finalStatus = 'Verified Employer';
+      } else if (['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'].includes(domain)) {
+        finalScore = 5;
+        finalStatus = 'Public Email Warning';
+      } else {
+        finalScore = 35;
+        finalStatus = 'Unverified Domain';
+      }
     }
+
+    return NextResponse.json({
+      success: true,
+      emailScanned: email,
+      domain: domain || 'Unknown',
+      trustScore: finalScore,
+      status: finalStatus,
+      isVerified: !!company,
+      aiSummary: aiAnalysis
+    });
 
   } catch (error: any) {
     console.error("🚨 VERIFICATION CRASH:", error.message);

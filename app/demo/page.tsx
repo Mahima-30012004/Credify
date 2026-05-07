@@ -180,35 +180,7 @@ export default function LiveDemoPage() {
 
         </div>
 
-        {/* FEATURES */}
-        <div className="grid md:grid-cols-3 gap-4 mb-12">
 
-          <button
-            type="button"
-            onClick={() => router.push('/certificate/CRD-OFFICIAL-001')}
-            className="border p-4 rounded-xl hover:scale-105 transition flex gap-2"
-          >
-            <Lock /> Signed Certificate
-          </button>
-
-          <button
-            type="button"
-            onClick={handleScan}
-            className="border p-4 rounded-xl hover:scale-105 transition flex gap-2"
-          >
-            <Clock />
-            {scanning ? 'Scanning...' : 'Real-time Check'}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="border p-4 rounded-xl hover:scale-105 transition flex gap-2"
-          >
-            <Zap /> Instant Verification
-          </button>
-
-        </div>
 
         {/* ✅ SECURE ALERT CTA */}
         <div className="mt-10 text-center">
@@ -252,42 +224,7 @@ export default function LiveDemoPage() {
 
       </div>
 
-      {/* MODAL */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
 
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl w-[90%] max-w-md">
-
-            <div className="flex justify-between mb-4">
-              <h3>Verify Domain</h3>
-              <button type="button" onClick={() => setShowModal(false)}>
-                <X />
-              </button>
-            </div>
-
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter link..."
-              className="w-full border p-2 rounded mb-4 bg-transparent"
-            />
-
-            <button
-              type="button"
-              onClick={handleVerify}
-              className="w-full bg-emerald-500 py-2 rounded"
-            >
-              Verify
-            </button>
-
-            {verifyResult && (
-              <p className="mt-4 text-center">{verifyResult}</p>
-            )}
-
-          </div>
-
-        </div>
-      )}
 
     </main>
   );
