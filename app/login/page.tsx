@@ -12,30 +12,35 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // The function that triggers when the user clicks "Sign In"
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); // Stops the page from refreshing
+    e.preventDefault(); 
     setIsLoading(true);
     setError('');
 
     try {
-      // Send the email and password to your Next.js backend API
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to sign in');
-      }
-
-      const data = await response.json();
-      console.log('Success:', data);
+      // Simulate network request for mock frontend
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Redirect user to the main scanner/dashboard
-      router.push('/');
+      const usersDbStr = localStorage.getItem('credify_users_db');
+      const usersDb = usersDbStr ? JSON.parse(usersDbStr) : {};
+      
+      const normalizedEmail = email.trim();
+      const normalizedPassword = password.trim();
+
+      // Check if user exists and password matches
+      if (!usersDb[normalizedEmail]) {
+        throw new Error('Account not found. Please sign up first.');
+      } else if (usersDb[normalizedEmail] !== normalizedPassword) {
+        throw new Error('Incorrect password. Please try again.');
+      }
+      
+      // Save simulated user session
+      localStorage.setItem('credify_user', normalizedEmail);
+      
+      console.log('Mock login successful:', email);
+      
+      // Redirect user to the main page
+      window.location.href = '/';
 
     } catch (err: any) {
       setError(err.message);

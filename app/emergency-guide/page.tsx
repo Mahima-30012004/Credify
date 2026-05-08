@@ -41,15 +41,41 @@ export default function EmergencyGuidePage() {
           </ul>
         </div>
 
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-6 md:p-8">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-amber-800 dark:text-amber-400 mb-4">
+            <AlertTriangle size={20} /> 4. Communication Templates
+          </h2>
+          <p className="text-slate-700 dark:text-slate-300 mb-4 text-sm">Use these templates to notify your bank and the real company immediately:</p>
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-amber-100 dark:border-amber-900/30">
+              <h3 className="text-xs font-bold uppercase text-amber-600 dark:text-amber-500 mb-2">To Your Bank</h3>
+              <p className="text-sm font-mono text-slate-600 dark:text-slate-400">"I have been the victim of a fraudulent job scam. On [Date], I authorized a transaction of [Amount] under false pretenses. I urgently request a freeze on my account and wish to file a fraud chargeback dispute for this transaction."</p>
+            </div>
+            <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-amber-100 dark:border-amber-900/30">
+              <h3 className="text-xs font-bold uppercase text-amber-600 dark:text-amber-500 mb-2">To The Real Company (via their official site)</h3>
+              <p className="text-sm font-mono text-slate-600 dark:text-slate-400">"I am writing to report that someone is impersonating your HR department. They contacted me from [Fake Email/Number] offering a job at [Company Name]. I wanted to bring this to your security team's attention."</p>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 md:p-8">
           <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white mb-4">
-            <Phone size={20} /> 3. Report the Scam
+            <Phone size={20} /> 5. Report the Scam
           </h2>
           <ul className="list-disc pl-5 space-y-2 text-slate-700 dark:text-slate-300">
             <li>Report the fraudulent job posting to the platform where you found it (e.g., LinkedIn, Indeed, Telegram).</li>
             <li>File a report with your national cybercrime reporting center (e.g., IC3 in the US, Action Fraud in the UK, or the equivalent cyber police portal in your country).</li>
             <li>Warn others by submitting the scam details to the Credify intelligence database.</li>
           </ul>
+        </div>
+        
+        <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 md:p-8">
+          <h2 className="text-xl font-bold text-emerald-800 dark:text-emerald-400 mb-2">
+            Remember: You Are Not Alone
+          </h2>
+          <p className="text-slate-700 dark:text-slate-300 text-sm">
+            Job scams are highly sophisticated operations run by professional syndicates. They prey on the stress of job hunting. Do not blame yourself. Talk to a trusted friend or family member, and consider reaching out to local victim support services if you are feeling overwhelmed.
+          </p>
         </div>
 
       </div>

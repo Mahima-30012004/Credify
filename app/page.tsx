@@ -228,7 +228,7 @@ export default function Home() {
             <div className="bg-white dark:bg-slate-900 border border-indigo-500 dark:border-cyan-500/50 rounded-3xl p-8 flex flex-col relative shadow-xl dark:shadow-[0_0_30px_rgba(6,182,212,0.15)] transform md:-translate-y-4 transition-all">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-600 dark:bg-cyan-500 text-white dark:text-slate-900 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full transition-colors">Most Popular</div>
               <p className="text-[10px] font-bold tracking-widest text-indigo-600 dark:text-cyan-500 uppercase mb-4 transition-colors">Growth</p>
-              <div className="flex items-baseline gap-1 mb-6"><h3 className="text-4xl font-black text-slate-900 dark:text-white transition-colors">RS. 200</h3><span className="text-slate-400 dark:text-slate-500 transition-colors">/mo</span></div>
+              <div className="flex items-baseline gap-1 mb-6"><h3 className="text-4xl font-black text-slate-900 dark:text-white transition-colors">₹200</h3><span className="text-slate-400 dark:text-slate-500 transition-colors">/mo</span></div>
               <ul className="space-y-4 mb-10 flex-grow">
                 <li className="flex items-center gap-3 text-slate-800 dark:text-slate-200 text-sm transition-colors"><CheckCircle2 size={16} className="text-indigo-500 dark:text-cyan-500"/> Unlimited staff lookup</li>
                 <li className="flex items-center gap-3 text-slate-800 dark:text-slate-200 text-sm transition-colors"><CheckCircle2 size={16} className="text-indigo-500 dark:text-cyan-500"/> Brand impersonation alerts</li>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [backupEmail, setBackupEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,19 +20,40 @@ export default function SignupPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, backupEmail }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create account');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const mockUserId = 'USER_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+      
+      const normalizedEmail = email.trim();
+      const normalizedPassword = password.trim();
+      
+      // Refactored mock database: object { email: password }
+      const usersDbStr = localStorage.getItem('credify_users_db');
+      const usersDb = usersDbStr ? JSON.parse(usersDbStr) : {};
+      
+      if (usersDb[normalizedEmail]) {
+        throw new Error('Account with this email already exists.');
       }
+      
+      // Add new user
+      usersDb[normalizedEmail] = normalizedPassword;
+      localStorage.setItem('credify_users_db', JSON.stringify(usersDb));
+      
+      // Cleanup old legacy keys
+      localStorage.removeItem('credify_registered_users');
+      localStorage.removeItem('credify_mock_password');
+      
+      // Save profile data immediately
+      localStorage.setItem('credify_profile_data', JSON.stringify({
+        name: name,
+        email: normalizedEmail,
+        age: '',
+        gender: 'prefer-not-to-say',
+        occupation: '',
+        location: ''
+      }));
 
-      const data = await response.json();
-      setGeneratedUserId(data.user.userId);
+      setGeneratedUserId(mockUserId);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -79,6 +101,18 @@ export default function SignupPage() {
                 {error}
               </div>
             )}
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">Full Name</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Alex Doe" 
+                className="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white transition-all"
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">Email</label>

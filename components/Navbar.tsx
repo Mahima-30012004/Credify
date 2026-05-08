@@ -23,9 +23,18 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
   const pathname = usePathname();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined' && localStorage.getItem('credify_user')) {
+      setIsLoggedIn(true);
+      const pic = localStorage.getItem('credify_profile_pic');
+      if (pic) setProfilePic(pic);
+    }
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/70 dark:bg-slate-950/60 backdrop-blur-md transition-colors duration-300">
@@ -50,10 +59,10 @@ export default function Navbar() {
 
           {/* Products Dropdown */}
           <div className="relative group h-full flex items-center cursor-pointer">
-            <div className="flex items-center gap-1 text-sm font-semibold text-slate-700 dark:text-white transition-colors">
+            <Link href="/verifiers" className={`flex items-center gap-1 text-sm font-semibold transition-colors ${pathname === '/verifiers' ? 'text-indigo-600 dark:text-cyan-400' : 'text-slate-700 dark:text-white hover:text-indigo-600 dark:hover:text-cyan-400'}`}>
               Verifiers
               <ChevronDown size={14} className="opacity-70 transition-transform duration-200 group-hover:rotate-180" />
-            </div>
+            </Link>
 
             <div className="absolute top-full left-0 mt-0 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50">
               <div className="bg-white dark:bg-slate-900/95 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-2xl p-2 shadow-2xl">
@@ -100,8 +109,8 @@ export default function Navbar() {
             Intelligence
           </Link>
 
-          <Link href="/demo" className={`text-sm font-semibold transition-colors ${pathname === '/demo' ? 'text-indigo-600 dark:text-cyan-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}>
-            Live Demo
+          <Link href="/how-it-works" className={`text-sm font-semibold transition-colors ${pathname === '/how-it-works' ? 'text-indigo-600 dark:text-cyan-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}>
+            How It Works
           </Link>
 
 
@@ -117,18 +126,50 @@ export default function Navbar() {
             {mounted && (theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />)}
           </button>
 
-          <a
-            href="/V2_GuardianDialer.apk"
-            download="V2_GuardianDialer.apk"
+          <Link
+            href="/get-app"
             className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all text-sm font-bold"
           >
             <Smartphone size={16} />
             Get App
-          </a>
-
-          <Link href="/login" className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full bg-indigo-50 dark:bg-cyan-950/50 border border-indigo-100 dark:border-cyan-500/30 text-indigo-600 dark:text-cyan-400 hover:bg-indigo-100 dark:hover:bg-cyan-900/50 hover:border-indigo-200 dark:hover:border-cyan-400/50 transition-all text-sm font-bold shadow-sm">
-            Login / Sign Up
           </Link>
+
+          {mounted && isLoggedIn ? (
+            <div className="relative group cursor-pointer hidden md:block">
+              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors group-hover:border-indigo-300 dark:group-hover:border-cyan-500/50 overflow-hidden">
+                {profilePic ? (
+                  <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                )}
+              </div>
+              
+              <div className="absolute top-full right-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2 shadow-xl flex flex-col gap-1">
+                  <Link href="/profile" className="px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors font-semibold">
+                    Edit Profile
+                  </Link>
+                  <Link href="/settings" className="px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors font-semibold block">
+                    Settings
+                  </Link>
+                  <div className="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+                  <button 
+                    onClick={() => {
+                      localStorage.removeItem('credify_user');
+                      window.location.href = '/';
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors font-semibold"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Link href="/login" className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full bg-indigo-50 dark:bg-cyan-950/50 border border-indigo-100 dark:border-cyan-500/30 text-indigo-600 dark:text-cyan-400 hover:bg-indigo-100 dark:hover:bg-cyan-900/50 hover:border-indigo-200 dark:hover:border-cyan-400/50 transition-all text-sm font-bold shadow-sm">
+              Login / Sign Up
+            </Link>
+          )}
 
           <button
             className="md:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"

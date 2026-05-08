@@ -60,7 +60,7 @@ export default function Footer() {
             <h3 className="font-bold text-slate-900 dark:text-white mb-4 text-xs tracking-widest uppercase opacity-60">Platform</h3>
             <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
               <li><Link href="/trustscore" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">TrustScore Scan</Link></li>
-              <li><Link href="/browser-extension" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Browser Extension</Link></li>
+              <li><Link href="/browser-extension" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-2">Chrome Extension <span className="text-[9px] bg-indigo-100 text-indigo-600 dark:bg-cyan-900/30 dark:text-cyan-400 px-2 py-0.5 rounded-full uppercase tracking-widest font-bold">Beta</span></Link></li>
             </ul>
           </div>
           <div>
